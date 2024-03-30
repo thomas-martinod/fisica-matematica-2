@@ -5,17 +5,43 @@ from matplotlib.animation import FuncAnimation
 from scipy.integrate import dblquad
 
 # Definir constantes
-a = 2
-b = 2
-alpha = 0.1
+a = float(input('Ingrese la longitud en x de la placa (en m): '))
+b = float(input('Ingrese la longitud en y de la placa (en m): '))
+alpha = float(input('Ingrese la constante de difusión térmica α (en m^2 / s)'))
+f_opt = input('Ingrese alguna de las siguientes opciones para la distribución inicial del calor f(x,y):\n1. Distribución Gaussiana\n2. Seno\n3.Personalizada')
 
-# Definir la función f(x, y) (distribución inicial de temperatura)
+while(True):
+    if f_opt == '1':
+        break
+    elif f_opt == '2':
+        break
+    elif f_opt == '3':
+        f_str = input('Ingrese la función f(x,y) = ')
+        break
+    else:
+        f_opt = input('Ingresa alguna de las 3 opciones: ')
+
+
+
 def f(x, y):
-    return 2**15*x*7*y
+    x_center = a / 2
+    y_center = b / 2
 
-# Calcular los coeficientes Cnm
+    amplitude = 15
+    sigma_x = a / 4  # Controla la dispersión en dirección x
+    sigma_y = b / 4  # Controla la dispersión en dirección y
+
+    gaussian = amplitude * np.exp(-((x - x_center)**2 / (2 * sigma_x**2) + (y - y_center)**2 / (2 * sigma_y**2)))
+    return gaussian
+
+
+def f_sin(x, y):
+    return 10 * np.sin(9*x)**2 + 3**y
+
+
+# Calcular los coeficientes Cnm4
 def Cnm(n, m):
-    integrand = lambda x, y: f(x, y) * np.sin(n * np.pi * x / a) * np.sin(m * np.pi * y / b)
+    integrand = lambda x, y: f_sin(x, y) * np.sin(n * np.pi * x / a) * np.sin(m * np.pi * y / b)
     integral, _ = dblquad(integrand, 0, b, lambda y: 0, lambda y: a)
     return (4 / (a * b)) * integral
 
@@ -58,7 +84,7 @@ def update(frame, surf, ax):
     return surf
 
 # Crear la animación
-ani = FuncAnimation(fig, update, frames=np.linspace(0, 30, 1000), fargs=(surf, ax), interval=50)
+ani = FuncAnimation(fig, update, frames=np.linspace(0, 100, 1000), fargs=(surf, ax), interval=50)
 
 # Mostrar la animación
 plt.show()
