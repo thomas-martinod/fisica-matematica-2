@@ -1,0 +1,29 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+x = np.linspace(-5, 5, 100)
+y = np.linspace(-5, 5, 100)
+
+X, Y = np.meshgrid(x, y)
+
+def generate_data(frame):
+    Z = np.sin(np.sqrt(X**2 + Y**2 + frame))
+    return Z
+
+surf = [ax.plot_surface(X, Y, generate_data(0), cmap='Purples_r')]
+
+def update(frame, surf, ax):
+    ax.clear()
+    ax.set_zlim(-2, 2)
+    ax.set_title('Frame {}'.format(frame))
+    surf[0] = ax.plot_surface(X, Y, generate_data(frame), cmap='Purples_r')
+    return surf
+
+ani = FuncAnimation(fig, update, frames=np.linspace(0, 10, 100), fargs=(surf, ax), interval=50)
+
+plt.show()

@@ -1,0 +1,120 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+from scipy.integrate import dblquad
+
+# Definir constantes
+a = 2
+b = 2
+alpha = 6
+
+# Definir la función f(x, y) (distribución inicial de temperatura)
+def f(x, y):
+    return np.sin(3 * x)
+
+# Calcular los coeficientes Cnm
+def Cnm(n, m):
+    integrand = lambda x, y: f(x, y) * np.sin(n * np.pi * x / a) * np.sin(m * np.pi * y / b)
+    integral, _ = dblquad(integrand, 0, b, lambda y: 0, lambda y: a)
+    return (4 / (a * b)) * integral
+
+# Calcular la temperatura en un punto (x, y, t) según la ecuación dada
+def temperature(x, y, t, n_max=5, m_max=5):
+    result = 0
+    for n in range(1, n_max + 1):
+        for m in range(1, m_max + 1):
+            lambda_nm = (n * np.pi / a)**2 + (m * np.pi / b)**2
+            result += Cnm(n, m) * np.sin(n * np.pi * x / a) * np.sin(m * np.pi * y / b) * np.exp(-alpha * lambda_nm * t)
+    return result
+
+# Crear la malla de puntos en la placa
+x = np.linspace(0, a, 100)
+y = np.linspace(0, b, 100)
+X, Y = np.meshgrid(x, y)
+
+# Crear la figura y el subplot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Función para generar los datos de temperatura en cada instante de tiempo
+def generate_data(frame):
+    Z = temperature(X, Y, frame)
+    return Z
+
+# Plot inicial
+surf = [ax.plot_surface(X, Y, generate_data(0), cmap='Purples_r')]
+
+# Función de actualización para la animación
+def update(frame, surf, ax):
+    ax.clear()
+    ax.set_zlim(-2, 2)
+    ax.set_title('Frame {}'.format(frame))
+    surf[0] = ax.plot_surface(X, Y, generate_data(frame), cmap='Purples_r')
+    return surf
+
+# Crear la animación
+ani = FuncAnimation(fig, update, frames=np.linspace(0, 10, 100), fargs=(surf, ax), interval=50)
+
+# Mostrar la animación
+plt.show()
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+from scipy.integrate import dblquad
+
+# Definir constantes
+a = 2
+b = 2
+alpha = 0.1
+
+# Definir la función f(x, y) (distribución inicial de temperatura)
+def f(x, y):
+    return np.sin(3 * x)
+
+# Calcular los coeficientes Cnm
+def Cnm(n, m):
+    integrand = lambda x, y: f(x, y) * np.sin(n * np.pi * x / a) * np.sin(m * np.pi * y / b)
+    integral, _ = dblquad(integrand, 0, b, lambda y: 0, lambda y: a)
+    return (4 / (a * b)) * integral
+
+# Calcular la temperatura en un punto (x, y, t) según la ecuación dada
+def temperature(x, y, t, n_max=5, m_max=5):
+    result = 0
+    for n in range(1, n_max + 1):
+        for m in range(1, m_max + 1):
+            lambda_nm = (n * np.pi / a)**2 + (m * np.pi / b)**2
+            result += Cnm(n, m) * np.sin(n * np.pi * x / a) * np.sin(m * np.pi * y / b) * np.exp(-alpha * lambda_nm * t)
+    return result
+
+# Crear la malla de puntos en la placa
+x = np.linspace(0, a, 100)
+y = np.linspace(0, b, 100)
+X, Y = np.meshgrid(x, y)
+
+# Crear la figura y el subplot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Función para generar los datos de temperatura en cada instante de tiempo
+def generate_data(frame):
+    Z = temperature(X, Y, frame)
+    return Z
+
+# Plot inicial
+surf = [ax.plot_surface(X, Y, generate_data(0), cmap='Purples_r')]
+
+# Función de actualización para la animación
+def update(frame, surf, ax):
+    ax.clear()
+    ax.set_zlim(-2, 2)
+    ax.set_title('Frame {}'.format(frame))
+    surf[0] = ax.plot_surface(X, Y, generate_data(frame), cmap='Purples_r')
+    return surf
+
+# Crear la animación
+ani = FuncAnimation(fig, update, frames=np.linspace(0, 10, 100), fargs=(surf, ax), interval=50)
+
+# Mostrar la animación
+plt.show()
