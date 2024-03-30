@@ -11,7 +11,7 @@ alpha = 0.1
 
 # Definir la función f(x, y) (distribución inicial de temperatura)
 def f(x, y):
-    return np.sin(3 * x)
+    return 2**15*x*7*y
 
 # Calcular los coeficientes Cnm
 def Cnm(n, m):
@@ -42,19 +42,23 @@ def generate_data(frame):
     Z = temperature(X, Y, frame)
     return Z
 
-# Plot inicial
-surf = [ax.plot_surface(X, Y, generate_data(0), cmap='Purples_r')]
+initial_temperature = generate_data(0)
+surf = [ax.plot_surface(X, Y, initial_temperature, cmap='hot')]
 
-# Función de actualización para la animación
+# Get the maximum temperature value to set the colorbar range
+max_temperature = initial_temperature.max()
+
+# Modify the update function to update the colorbar range and colormap
 def update(frame, surf, ax):
     ax.clear()
-    ax.set_zlim(-2, 2)
+    ax.set_zlim(0, max_temperature)
     ax.set_title('Frame {}'.format(frame))
-    surf[0] = ax.plot_surface(X, Y, generate_data(frame), cmap='Purples_r')
+    new_data = generate_data(frame)
+    surf[0] = ax.plot_surface(X, Y, new_data, cmap='hot', vmin=0, vmax=max_temperature)
     return surf
 
 # Crear la animación
-ani = FuncAnimation(fig, update, frames=np.linspace(0, 10, 100), fargs=(surf, ax), interval=50)
+ani = FuncAnimation(fig, update, frames=np.linspace(0, 30, 1000), fargs=(surf, ax), interval=50)
 
 # Mostrar la animación
 plt.show()
