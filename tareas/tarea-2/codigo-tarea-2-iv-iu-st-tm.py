@@ -7,7 +7,7 @@ from scipy.integrate import dblquad
 from matplotlib.animation import FFMpegWriter, PillowWriter
 
 # Es necesario instalar el programa ffmpeg y poner el camino hacia el archivo ejecutable
-# El archivo ffmpeg.exe está en la carpeta
+# El archivo ffmpeg.exe está en la carpeta, pero se debe descomprimir primero
 plt.rcParams['animation.ffmpeg_path'] = r"C:\Users\thomm\Documents\GitHub\fisica-matematica-2\tareas\tarea-2\ffmpeg.exe"
 
 metadata = dict(title='gaussiana', artist='santiago-tolosa')
