@@ -5,20 +5,19 @@ from matplotlib.animation import FuncAnimation
 from scipy.integrate import dblquad
 from matplotlib.animation import FFMpegWriter, PillowWriter
 
-#es necesario instalar el programa ffmpeg y poner el camino hacia el archivo ejecutable
+# Es necesario instalar el programa ffmpeg y poner el camino hacia el archivo ejecutable
 plt.rcParams['animation.ffmpeg_path'] = r"C:\Users\santiago toloza\Downloads\ffmpeg-master-latest-win64-gpl\ffmpeg-master-latest-win64-gpl\bin\ffmpeg.exe"
 
-metadata = dict(title='Movie', artist='SantiagoToloza')
+metadata = dict(title='gaussiana', artist='santiago-tolosa')
 writer = FFMpegWriter(fps=15, metadata=metadata)
 
 # Definir constantes
 a = float(input('Ingrese la longitud en x de la placa (en m): '))
 b = float(input('Ingrese la longitud en y de la placa (en m): '))
-alpha = float(input('Ingrese la constante de difusión térmica α (en m^2 / s)'))
-f_opt = input('Ingrese alguna de las siguientes opciones para la distribución inicial del calor f(x,y):\n1. Distribución Gaussiana\n2. Seno\n3.Personalizada')
+alpha = float(input('Ingrese la constante de difusión térmica α (en m^2/s): '))
+f_opt = input('Ingrese alguna de las siguientes opciones para la distribución inicial del calor f(x,y):\n1. Distribución Gaussiana\n2. Seno-exponencial\n3. Personalizada\n')
 
-
-#cambiar la funcion acorde a la seleccion
+# Cambiar la funcion acorde a la seleccion
 while(True):
     if f_opt == '1':
         def f(x, y):
@@ -44,15 +43,13 @@ while(True):
     else:
         f_opt = input('Ingresa alguna de las 3 opciones: ')
 
-
-
-# Calcular los coeficientes Cnm4
+# Calcular los coeficientes Cnm
 def Cnm(n, m):
     integrand = lambda x, y: f(x, y) * np.sin(n * np.pi * x / a) * np.sin(m * np.pi * y / b)
     integral, _ = dblquad(integrand, 0, b, lambda y: 0, lambda y: a)
     return (4 / (a * b)) * integral
 
-# Calcular la temperatura en un punto (x, y, t) según la ecuación dada
+# Calcular la temperatura en un punto (x, y, t)
 def temperature(x, y, t, n_max=10, m_max=10):
     result = 0
     for n in range(1, n_max + 1):
@@ -76,12 +73,10 @@ def generate_data(frame):
     return Z
 
 initial_temperature = generate_data(0)
-
-# Get the maximum temperature value to set the colorbar range
 max_temperature = initial_temperature.max()
 
 # Crear la animación
-with writer.saving(fig, "gaussian.mp4", 100):
+with writer.saving(fig, "gaussiana.mp4", 100):
     for tval in np.linspace(0,2,100):
         print(tval)
         Z = generate_data(tval)
