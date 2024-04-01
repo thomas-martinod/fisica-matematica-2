@@ -1,3 +1,4 @@
+from numpy import *
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -6,7 +7,8 @@ from scipy.integrate import dblquad
 from matplotlib.animation import FFMpegWriter, PillowWriter
 
 # Es necesario instalar el programa ffmpeg y poner el camino hacia el archivo ejecutable
-plt.rcParams['animation.ffmpeg_path'] = r"C:\Users\santiago toloza\Downloads\ffmpeg-master-latest-win64-gpl\ffmpeg-master-latest-win64-gpl\bin\ffmpeg.exe"
+# El archivo ffmpeg.exe está en la carpeta
+plt.rcParams['animation.ffmpeg_path'] = r"C:\Users\thomm\Documents\GitHub\fisica-matematica-2\tareas\tarea-2\ffmpeg.exe"
 
 metadata = dict(title='gaussiana', artist='santiago-tolosa')
 writer = FFMpegWriter(fps=15, metadata=metadata)
@@ -28,12 +30,12 @@ while(True):
             sigma_x = a / 8  # Controla la dispersión en dirección x
             sigma_y = b / 8  # Controla la dispersión en dirección y
 
-            gaussian = amplitude * np.exp(-((x - x_center)**2 / (2 * sigma_x**2) + (y - y_center)**2 / (2 * sigma_y**2)))
+            gaussian = amplitude * exp(-((x - x_center)**2 / (2 * sigma_x**2) + (y - y_center)**2 / (2 * sigma_y**2)))
             return gaussian
         break
     elif f_opt == '2':
         def f(x, y):
-            return 10 * np.sin(9*x)**2 + 3**y
+            return 10 * sin(9*x)**2 + 3**y
         break
     elif f_opt == '3':
         f_str = input('Ingrese la función f(x,y) = ')
@@ -50,7 +52,7 @@ def Cnm(n, m):
     return (4 / (a * b)) * integral
 
 # Calcular la temperatura en un punto (x, y, t)
-def temperature(x, y, t, n_max=10, m_max=10):
+def temperature(x, y, t, n_max=6, m_max=6):
     result = 0
     for n in range(1, n_max + 1):
         for m in range(1, m_max + 1):
@@ -75,15 +77,29 @@ def generate_data(frame):
 initial_temperature = generate_data(0)
 max_temperature = initial_temperature.max()
 
+# Función para la distribución inicial del calor
+def initial_distribution(x, y):
+    if f_opt == '1':
+        return r'$f(x,y) \sim e^{x^2 + y^2}$'
+    elif f_opt == '2':
+        return r'$f(x,y) = 10\sin(9x)^2 + 3^y$'
+    elif f_opt == '3':
+        return r'$f(x,y) = ' + f_str + '$'
+
+
 # Crear la animación
-with writer.saving(fig, "gaussiana.mp4", 100):
-    for tval in np.linspace(0,2,100):
+with writer.saving(fig, "gaussiana.mp4", 150):
+    for tval in np.linspace(0,5,150):
         print(tval)
         Z = generate_data(tval)
         ax.set_zlim(0, max_temperature)
-        # Modify the update function to update the colorbar range and colormap
         ax.plot_surface(X,Y,Z,cmap='hot', vmin=0, vmax=max_temperature)
+
+        # Agregar texto con la distribución inicial del calor
+        ax.text2D(0.05, 0.95, initial_distribution(X, Y) + '\n' + r'$\alpha = {:.2f} \, \mathrm{{m^2/s}}$'.format(alpha), transform=ax.transAxes, ha='left')
+
+        # Agregar texto con el valor del tiempo en segundos
+        ax.text2D(0.95, 0.95, 't = {:.1f} s'.format(tval), transform=ax.transAxes, ha='right', color='black')
 
         writer.grab_frame()
         plt.cla()
-
