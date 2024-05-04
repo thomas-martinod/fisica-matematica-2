@@ -40,7 +40,7 @@ def plot_Jv():
     plt.legend()
 
     plt.grid(True, color='lightgray')
-    plt.savefig('extras/images/bessel-negative-integers.pdf', format='pdf')
+    plt.savefig('special-functions/images/bessel-negative-integers.pdf', format='pdf')
     plt.show()
 
 
@@ -65,4 +65,4 @@ def plot_Nn():
     plt.show()
 
 
-plot_Nn()
+plot_Jv()
